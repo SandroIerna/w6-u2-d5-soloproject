@@ -81,7 +81,7 @@ AccomodationsRouter.put(
           req.body,
           { new: true, runValidators: true }
         );
-        if (updatedAccomodation) res.send(updatedAccomodation);
+        if (updatedAccomodation) res.status(204).send(updatedAccomodation);
         else
           next(
             createHttpError(
@@ -92,7 +92,7 @@ AccomodationsRouter.put(
       } else {
         next(
           createHttpError(
-            401,
+            403,
             `Only the owner of the accomodation can modify it!`
           )
         );
