@@ -64,15 +64,17 @@ AccomodationsRouter.put(
   hostOnlyMiddleware,
   async (req, res, next) => {
     try {
-      const host = await UsersModel.findById(req.user._id).populate({
-        path: "accomodations",
-      });
-      console.log(host.accomodations);
+      const host = await UsersModel.findById(req.user._id);
+      /*       console.log(host.accomodations.toString());
+      const filteredArray = host.accomodations.filter(
+        (accomodation) => accomodation.toString() === req.params.accomodationId
+      );
+      console.log(filteredArray.length !== 0); */
       if (
         host.accomodations.filter(
           (accomodation) =>
             accomodation._id.toString() === req.params.accomodationId
-        ) !== -1
+        ).length !== 0
       ) {
         const updatedAccomodation = await AccomodationsModel.findByIdAndUpdate(
           req.params.accomodationId,
@@ -100,12 +102,45 @@ AccomodationsRouter.put(
     }
   }
 );
-
-AccomodationsRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
+/* 
+AccomodationsRouter.delete("/", JWTAuthMiddleware, async (req, res, next) => {
   try {
+    const host = await UsersModel.findById(req.user._id); */
+/*       console.log(host.accomodations.toString());
+      const filteredArray = host.accomodations.filter(
+        (accomodation) => accomodation.toString() === req.params.accomodationId
+      );
+      console.log(filteredArray.length !== 0); */
+/*     if (
+      host.accomodations.filter(
+        (accomodation) =>
+          accomodation._id.toString() === req.params.accomodationId
+      ).length !== 0
+    ) {
+      const deletedAccomodation = await AccomodationsModel.findByIdAndDelete(
+        req.params.accomodationId
+      );
+      if (deletedAccomodation) {
+        const updatedHost = await UsersModel.findByIdAndUpdate(req.user._id)
+        res.status(203).send();
+      } else
+        next(
+          createHttpError(
+            404,
+            `Accomodation with id ${req.params.accomodationId} not found!`
+          )
+        );
+    } else {
+      next(
+        createHttpError(
+          401,
+          `Only the owner of the accomodation can modify it!`
+        )
+      );
+    }
   } catch (error) {
     next(error);
   }
-});
+}); */
 
 export default AccomodationsRouter;
