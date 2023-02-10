@@ -2,6 +2,8 @@ import express from "express";
 import listEndpoints from "express-list-endpoints";
 import cors from "cors";
 import mongoose from "mongoose";
+import usersRouter from "./api/users/index.js";
+import AccomodationsRouter from "./api/accomodations/index.js";
 
 const server = express();
 const port = process.env.PORT || 3001;
@@ -12,6 +14,9 @@ server.use(cors());
 server.use(express.json());
 
 /* **************************** Endpoints **************************** */
+
+server.use("/users", usersRouter);
+server.use("/accomodations", AccomodationsRouter);
 
 /* ************************* Error handlers ************************** */
 
