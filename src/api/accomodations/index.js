@@ -92,7 +92,7 @@ AccomodationsRouter.put(
       } else {
         next(
           createHttpError(
-            403,
+            401,
             `Only the owner of the accomodation can modify it!`
           )
         );
