@@ -1,6 +1,6 @@
 import express from "express";
 import createHttpError from "http-errors";
-import AccomodationsModel from "./model.js";
+import AccomodationsModel from "./model";
 import UsersModel from "../users/model.js";
 import { JWTAuthMiddleware } from "../../lib/jwtAuth.js";
 import { hostOnlyMiddleware } from "../../lib/hostOnly.js";
@@ -13,7 +13,7 @@ AccomodationsRouter.post(
   hostOnlyMiddleware,
   async (req, res, next) => {
     try {
-      const newAccomodation = await AccomodationsModel(req.body);
+      const newAccomodation = new AccomodationsModel(req.body);
       const { _id } = await newAccomodation.save();
       const updatedHost = await UsersModel.findByIdAndUpdate(
         req.user._id,

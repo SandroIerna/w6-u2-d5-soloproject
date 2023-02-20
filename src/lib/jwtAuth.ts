@@ -1,7 +1,17 @@
 import createHttpError from "http-errors";
-import { verifyAccessToken } from "./tools.js";
+import { verifyAccessToken } from "./tools";
+import { RequestHandler, Request } from "express";
+import { TokenPayload } from "./tools";
 
-export const JWTAuthMiddleware = async (req, res, next) => {
+interface UserRequest extends Request {
+  user?: TokenPayload;
+}
+
+export const JWTAuthMiddleware: RequestHandler = async (
+  req: UserRequest,
+  res,
+  next
+) => {
   if (!req.headers.authorization) {
     next(
       createHttpError(
@@ -16,7 +26,8 @@ export const JWTAuthMiddleware = async (req, res, next) => {
       req.user = { _id: payload._id, role: payload.role };
       next();
     } catch (error) {
-      next(createHttpError(401, "Token not valid!", console.log(error)));
+      console.log(error);
+      next(createHttpError(401, "Token not valid!"));
     }
   }
 };

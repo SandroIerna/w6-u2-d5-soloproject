@@ -1,15 +1,20 @@
 import express from "express";
+import { RequestHandler, Request } from "express";
 import createHttpError from "http-errors";
-import { createAccessToken } from "../../lib/tools.js";
+import { createAccessToken, TokenPayload } from "../../lib/tools.js";
 import UsersModel from "./model.js";
 import { JWTAuthMiddleware } from "../../lib/jwtAuth.js";
 import { hostOnlyMiddleware } from "../../lib/hostOnly.js";
 
 const usersRouter = express.Router();
 
+export interface UserRequest extends Request {
+  user: TokenPayload;
+}
+
 usersRouter.post("/register", async (req, res, next) => {
   try {
-    const newUser = await UsersModel(req.body);
+    const newUser = new UsersModel(req.body);
     const { _id, role } = await newUser.save();
     const payload = { _id: _id, role: role };
     const accessToken = await createAccessToken(payload);
@@ -35,10 +40,14 @@ usersRouter.post("/login", async (req, res, next) => {
   }
 });
 
-usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
-  const user = await UsersModel.findById(req.user._id);
-  res.send(user);
-});
+/* usersRouter.get(
+  "/me",
+  JWTAuthMiddleware,
+  async (req: UserRequest, res, next) => {
+    const user = await UsersModel.findById(req.user._id);
+    res.send(user);
+  }
+);
 
 usersRouter.get(
   "/me/accomodations",
@@ -54,13 +63,13 @@ usersRouter.get(
 
 usersRouter.post("/", async (req, res, next) => {
   try {
-    const newUser = await UsersModel(req.body);
+    const newUser = new UsersModel(req.body);
     const { _id } = await newUser.save();
     res.status(201).send({ _id });
   } catch (error) {
     next(error);
   }
-});
+}); */
 
 usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
   try {
