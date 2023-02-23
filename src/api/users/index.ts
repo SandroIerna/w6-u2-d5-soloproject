@@ -9,7 +9,7 @@ import { hostOnlyMiddleware } from "../../lib/hostOnly.js";
 const usersRouter = express.Router();
 
 export interface UserRequest extends Request {
-  user: TokenPayload;
+  user?: TokenPayload;
 }
 
 usersRouter.post("/register", async (req, res, next) => {
@@ -40,11 +40,11 @@ usersRouter.post("/login", async (req, res, next) => {
   }
 });
 
-/* usersRouter.get(
+usersRouter.get(
   "/me",
   JWTAuthMiddleware,
   async (req: UserRequest, res, next) => {
-    const user = await UsersModel.findById(req.user._id);
+    const user = await UsersModel.findById(req.user?._id);
     res.send(user);
   }
 );
@@ -53,11 +53,13 @@ usersRouter.get(
   "/me/accomodations",
   JWTAuthMiddleware,
   hostOnlyMiddleware,
-  async (req, res, next) => {
-    const host = await UsersModel.findById(req.user._id).populate({
+  async (req: UserRequest, res, next) => {
+    const host = await UsersModel.findById(req.user!._id).populate({
       path: "accomodations",
     });
-    res.send(host.accomodations);
+    if (host) {
+      res.send(host.accomodations);
+    }
   }
 );
 
@@ -69,7 +71,7 @@ usersRouter.post("/", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}); */
+});
 
 usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
   try {

@@ -6,6 +6,7 @@ interface User {
   password: string;
   email: string;
   role: "User" | "Admin";
+  accomodations: [{}];
 }
 
 export interface UserDocument extends User, Document {}
