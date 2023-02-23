@@ -4,6 +4,7 @@ import AccomodationsModel from "./model";
 import UsersModel from "../users/model.js";
 import { JWTAuthMiddleware } from "../../lib/jwtAuth.js";
 import { hostOnlyMiddleware } from "../../lib/hostOnly.js";
+import { UserRequest } from "../users";
 
 const AccomodationsRouter = express.Router();
 
@@ -11,12 +12,12 @@ AccomodationsRouter.post(
   "/",
   JWTAuthMiddleware,
   hostOnlyMiddleware,
-  async (req, res, next) => {
+  async (req: UserRequest, res, next) => {
     try {
       const newAccomodation = new AccomodationsModel(req.body);
       const { _id } = await newAccomodation.save();
       const updatedHost = await UsersModel.findByIdAndUpdate(
-        req.user._id,
+        req.user?._id,
         { $push: { accomodations: _id } },
         { new: true, runValidators: true }
       );
@@ -62,9 +63,9 @@ AccomodationsRouter.put(
   "/:accomodationId",
   JWTAuthMiddleware,
   hostOnlyMiddleware,
-  async (req, res, next) => {
+  async (req: UserRequest, res, next) => {
     try {
-      const host = await UsersModel.findById(req.user._id);
+      const host = await UsersModel.findById(req.user?._id);
       /*       console.log(host.accomodations.toString());
       const filteredArray = host.accomodations.filter(
         (accomodation) => accomodation.toString() === req.params.accomodationId
